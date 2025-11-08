@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>About -- 113208048</title>
+<style>
+    /* 基本設定 */
+    body {
+        font-family: "Times New Roman", Georgia, "Noto Serif TC", serif;
+        background-color: #f4f4f4; /* 讓整體看起來更像瀏覽器背景 */
+    }
+    /* 外框設定 */
+    .outer {
+        width: 720px;
+        margin: 28px auto;
+        border: 3px double #8d8d8d;
+        padding: 6px;
+        background: #fff;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1); /* 增加一點立體感 */
+    }
+    /* 表格設定 */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+    /* 表格單元格設定 */
+    th, td {
+        border: 1px solid #9a9a9a;
+        padding: 8px;
+        vertical-align: middle;
+        height: 40px; /* 統一表格行高 */
+    }
+    /* 標題列設定 */
+    .title {
+        background: #eee;
+        font-weight: 700;
+        text-align: center;
+        font-size: 20px;
+        padding: 12px 0;
+        border: none; /* 標題下方不需要邊線 */
+    }
+    .title th {
+        border: none;
+    }
+    /* 左側圖片區塊設定 */
+    .left-image-cell {
+        width: 100px; /* 根據圖片比例調整寬度 */
+        text-align: center;
+        font-size: 14px;
+        line-height: 1.5;
+        padding: 0; /* 移除預設 padding */
+    }
+    .left-image-cell img {
+        display: block;
+        width: 100%;
+        height: auto;
+        max-width: 130px; /* 限制圖片最大寬度 */
+        max-height: 90px; /* 限制圖片最大高度 */
+        margin: 10px auto 5px; /* 調整圖片位置 */
+        border: 1px solid #ccc;
+    }
+    /* 輸入欄位設定 */
+    input[type="text"], input[type="email"] {
+        width: 50%;
+        height: 22px;
+        padding: 2px 4px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+    }
+    
+    .say-input {
+        width: 250px;
+    }
+    /* 下拉選單設定 */
+    select {
+        width: 120px;
+        height: 28px;
+        padding: 2px;
+        border: 1px solid #ccc;
+    }
+    /* 日期輸入設定 */
+    input[type="date"] {
+        width: 120px;
+        height: 28px;
+        padding: 2px 4px;
+        border: 1px solid #ccc;
+    }
+    /* 檢查框和選項文字設定 */
+    .checks label {
+        margin-right: 8px;
+        white-space: nowrap; /* 防止選項換行 */
+    }
+    /* 按鈕列設定 */
+    .btncell {
+        text-align: left; /* 讓按鈕靠左對齊 */
+        padding: 10px;
+        border-top: none; /* 按鈕列上方的邊線已由上一個 tr 提供 */
+    }
+    .btn {
+        padding: 5px 12px;
+        border: 1px solid #9a9a9a;
+        background: #efefef;
+        cursor: pointer;
+        margin-right: 10px;
+        font-size: 16px;
+    }
+    .btn:hover {
+        background: #e0e0e0;
+    }
+    /* 左側標籤粗體 */
+    .label-cell {
+        font-weight: bold;
+        width: 150px; /* 統一左側標籤寬度 */
+    }
+</style>
+</head>
+<body>
+<div class="outer">
+    <table>
+        <tr>
+            <th class="title" colspan="3">About -- 113208048</th>
+        </tr>
+        <tr>
+            <td class="left-image-cell" rowspan="3">
+                <img src="C:\Users\user\OneDrive\桌面\1141_IntroToCS_113208048\HW3_Excel1\Lab1_Personal_Info\anders.JPG" alt="personal photo">
+                personal photo
+            </td>
+            <td colspan="2">
+                        <div>
+                            Name: <input type="text">
+                        </div>
+            
+                        <div>
+                            Gender:
+                            <label><input type="radio" name="gender" value="Male"> Male</label>
+                            <label><input type="radio" name="gender" value="Female"> Female</label>
+                            <label><input type="radio" name="gender" value="Other"> Other</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        County:
+                        <select>
+                            <option>Taipei</option>
+                            <option>Tainan</option>
+                            <option>Taichung</option>
+                            <option>Taoyuan</option>
+                        </select>
+                    </td>
+                    <td>
+                        Birthday: <input type="date">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                    Email:    
+                            <input type="email">
+                    </td>
+                </tr>
+        <tr>
+            <td class="label-cell">Hobby</td>
+            <td colspan="2" class="checks">
+                <label><input type="checkbox" name="hobby"> Swimming</label>
+                <label><input type="checkbox" name="hobby"> Volleyball</label>
+                <label><input type="checkbox" name="hobby"> Movie</label>
+                <label><input type="checkbox" name="hobby"> Game</label>
+                <label><input type="checkbox" name="hobby"> sleep</label>
+            </td>
+        </tr>
+        <tr>
+            <td class="label-cell">Skill</td>
+            <td colspan="2" class="checks">
+                <label><input type="checkbox" name="skill"> Java</label>
+                <label><input type="checkbox" name="skill"> HTML</label>
+                <label><input type="checkbox" name="skill"> Python</label>
+                <label><input type="checkbox" name="skill"> Microsoft Office</label>
+                <label><input type="checkbox" name="skill"> Premiere</label>
+            </td>
+        </tr>
+        <tr>
+            <td class="label-cell">Say Something</td>
+            <td colspan="2">
+                <input type="text" class="say-input" placeholder="Say something here.">
+            </td>
+        </tr>
+        <tr>
+            <td class="btncell" colspan="3">
+                <button class="btn">提交</button>
+                <button class="btn">重設</button>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>
