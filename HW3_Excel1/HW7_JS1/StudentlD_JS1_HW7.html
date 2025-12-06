@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1A2B Number Guessing Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        #game-container {
+            width: 80%;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        input[type="text"] {
+            padding: 10px;
+            margin-right: 10px;
+            font-size: 16px;
+            width: 150px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        #record-area {
+            margin-top: 20px;
+            border: 1px solid #eee;
+            padding: 10px;
+            text-align: left;
+            max-height: 250px;
+            overflow-y: auto;
+            background-color: #fff;
+        }
+        .attempt {
+            padding: 5px 0;
+            border-bottom: 1px dotted #ccc;
+        }
+        .result-ab {
+            font-weight: bold;
+            color: #d9534f;
+            float: right;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>113208048_HW6_1A2B</h1>
+
+    <div id="game-container">
+        <h2>猜測區</h2>
+        <input type="text" id="guessInput" maxlength="4" placeholder="輸入 4 個不重複數字">
+        <button onclick="play()">猜!</button>
+
+        <h2>記錄區 (總次數: <span id="guessCountDisplay">0</span>)</h2>
+        <div id="record-area">
+            </div>
+    </div>
+
+    <script>
+        // 全域變數
+        var answer = ""; // 儲存遊戲答案
+        var attemptCount = 0; // 儲存猜測次數
+        var guessInput = document.getElementById('guessInput');
+        var recordArea = document.getElementById('record-area');
+        var guessCountDisplay = document.getElementById('guessCountDisplay');
+
+        // ===============================================
+        // 1. 答案生成函式 (generateAnswer)
+        // ===============================================
+        /*
+         * 隨機生成四個不重複的數字 (0-9)，並回傳一個四位數的字串。
+         * 邏輯參考：圖片 1 的步驟 1-4
+         */
+        function generateAnswer() {
+            var digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]; // 步驟 1
+            var result = [];
+
+            while (result.length < 4) { // 步驟 4: 重複直到有四個數字
+                // 步驟 2: 隨機選擇一個索引
+                var randomIndex = Math.floor(Math.random() * digits.length); 
+                
+                // 步驟 3: 加入新陣列並從原陣列移除
+                var selectedDigit = digits[randomIndex];
+                result.push(selectedDigit);
+                digits.splice(randomIndex, 1); // 從原陣列中移除已選數字
+            }
+            
+            // 回傳四位數的字串
+            return result.join(''); 
+        }
+
+        // ===============================================
+        // 2. 輸入驗證函式 (isValid)
+        // ===============================================
+        /*
+         * 驗證玩家輸入是否有效：
+         * 1. 必須剛好四個字元長度
+         * 2. 必須全部是數字
+         * 3. 數字不能重複
+         */
+        function isValid(str) {
+            // 檢查長度是否剛好為 4
+            if (str.length !== 4) {
+                return false; 
+            }
+            
+            // 檢查是否全部是數字 (使用正規表達式)
+            if (!/^\d{4}$/.test(str)) {
+                return false;
+            }
+
+            // 檢查數字是否重複 (轉換成 Set，Set 的大小如果小於 4 代表有重複)
+            var digitSet = new Set(str.split(''));
+            if (digitSet.size < 4) {
+                return false;
+            }
+
+            return true;
+        }
+
+        // ===============================================
+        // 3. A/B 計算函式 (checkAB)
+        // ===============================================
+        /*
+         * 計算猜測數字 (guess) 相較於答案 (ans) 得到的 A 和 B 數量。
+         * XA: 數字和位置都正確 (Bulls)
+         * YB: 數字正確但位置錯誤 (Cows)
+         */
+        function checkAB(guess, ans) {
+            // 提示：將答案和猜測都轉換成陣列會讓比較更容易
+            var guessArray = guess.split('');
+            var ansArray = ans.split('');
+            var A = 0;
+            var B = 0;
+
+            for (var i = 0; i < 4; i++) {
+                if (guessArray[i] === ansArray[i]) {
+                    // 數字和位置都匹配
+                    A++; 
+                } else if (ansArray.includes(guessArray[i])) {
+                    // 數字存在於答案中，但位置不匹配
+                    B++; 
+                }
+            }
+
+            // 回傳 "XA YB" 格式的字串
+            return A + "A" + B + "B"; 
+        }
+
+        // ===============================================
+        // 4. 遊戲主流程函式 (play)
+        // ===============================================
+        /*
+         * 處理每次點擊「猜!」按鈕時的遊戲流程
+         */
+        function play() {
+            var input = guessInput.value;
+
+            // 1. 驗證輸入
+            if (!isValid(input)) {
+                // 題目要求：如果輸入無效，使用 alert() 警告使用者
+                alert("錯誤：請輸入四個不重複的數字 (0-9)！"); 
+                guessInput.value = ""; // 清空輸入框
+                return; // 結束，不計入次數
+            }
+
+            // 2. 更新猜測次數
+            attemptCount++;
+            guessCountDisplay.textContent = attemptCount;
+            
+            // 3. 計算 A/B 結果
+            var resultAB = checkAB(input, answer);
+            
+            // 4. 顯示記錄 (更新到 record-area)
+            var newAttempt = document.createElement('div');
+            newAttempt.className = 'attempt';
+            newAttempt.innerHTML = '第 ' + attemptCount + ' 次猜測: ' + 
+                                   input + 
+                                   '<span class="result-ab">' + resultAB + '</span>';
+            
+            // 將新記錄插入到記錄區的最頂端 (方便查看最新的)
+            recordArea.prepend(newAttempt); 
+            
+            // 5. 檢查是否猜中 (4A0B)
+            if (resultAB === "4A0B") {
+                // 題目要求：猜中時使用 alert() 顯示總次數
+                alert("恭喜你猜對了！答案是 " + answer + "。\n你總共猜了 " + attemptCount + " 次。");
+                // 遊戲結束，禁用輸入和按鈕
+                guessInput.disabled = true;
+                document.querySelector('button').disabled = true;
+
+            } else {
+                 // 6. 清空輸入框 (為下一次猜測準備)
+                guessInput.value = "";
+            }
+        }
+
+        // 5. 遊戲初始化
+        function initGame() {
+            answer = generateAnswer();
+            // 在開發/除錯時可以打開下面這行來查看答案
+            // console.log("Secret Answer:", answer);
+        }
+
+        // 程式載入時立刻執行初始化
+        initGame();
+    </script>
+</body>
+</html>
