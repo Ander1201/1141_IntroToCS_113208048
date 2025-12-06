@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Guessing Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        /* 讓圖片顯示得漂亮一點 */
+        #result-container img {
+            max-width: 300px;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>113208048_Number Guessing Game</h1>
+
+    <div id="result-container"></div>
+
+    <script>
+        // 1. 初始化變數 (參考圖片3的 Tips)
+        // 產生 1 到 100 的隨機整數
+        var answer = Math.floor(Math.random() * 100) + 1;
+        var chances = 7;
+        
+        // 設定初始範圍
+        var min = 1;
+        var max = 100;
+        
+        // 用來標記是否贏了遊戲
+        var isWin = false;
+
+        // 為了確保頁面 HTML 元素 (h1) 先載入，稍微延遲一下腳本執行 (可選，但使用者體驗較好)
+        // 這裡直接寫邏輯
+        
+        // 2. 遊戲迴圈 (While Loop)
+        while (chances > 0) {
+            // 提示使用者輸入，需顯示目前的有效範圍與剩餘次數
+            var input = window.prompt(
+                "請輸入 " + min + " 到 " + max + " 之間的整數。\n" + 
+                "你還有 " + chances + " 次機會。"
+            );
+
+            // 狀況 A: 使用者按了「取消」
+            if (input === null) {
+                break; // 直接結束遊戲
+            }
+
+            // 去除空白
+            var trimmedInput = input.trim();
+
+            // 3. 驗證輸入 (Validation)
+            // 檢查是否為空字串 或 不是數字 (isNaN)
+            if (trimmedInput === "" || isNaN(trimmedInput)) {
+                alert("輸入無效！請輸入一個有效的數字。");
+                continue; // 跳過這次迴圈，重新輸入 (不扣次數)
+            }
+
+            // 轉成數字
+            var guess = Number(trimmedInput);
+
+            // 檢查是否在有效範圍內 (必須在目前的 min 和 max 之間)
+            if (guess < min || guess > max) {
+                alert("請輸入有效範圍內的數字 (不能超出 " + min + " 到 " + max + " )！");
+                continue; // 跳過這次迴圈，重新輸入 (不扣次數)
+            }
+
+            // 4. 比對答案
+            if (guess === answer) {
+                // 猜對了
+                alert("恭喜你答對了！正確答案是 " + answer);
+                isWin = true;
+                break; // 跳出迴圈
+            } else if (guess > answer) {
+                // 猜太大
+                // 更新最大值範圍，例如猜 80 太大，新的最大值變成 79
+                max = guess - 1; 
+                chances--; // 扣除一次機會
+            } else {
+                // 猜太小
+                // 更新最小值範圍，例如猜 20 太小，新的最小值變成 21
+                min = guess + 1;
+                chances--; // 扣除一次機會
+            }
+        }
+
+        // 5. 遊戲結束處理 (顯示圖片)
+        var resultDiv = document.getElementById("result-container");
+
+        if (isWin) {
+            // 贏了：插入 correct.jpg
+            resultDiv.innerHTML = '<img src="correct.jpg" alt="Correct Answer">';
+        } else {
+            // 輸了 (機會歸零)：跳 Alert 公布答案 並 插入 wrong.jpg
+            if (chances === 0) {
+                alert("遊戲結束！次數已用完。\n正確答案是: " + answer);
+                resultDiv.innerHTML = '<img src="wrong.jpg" alt="Wrong Answer">';
+            }
+        }
+    </script>
+</body>
+</html>
