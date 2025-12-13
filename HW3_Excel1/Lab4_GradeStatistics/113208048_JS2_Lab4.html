@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Statistics Lab</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        /* 標題樣式 */
+        h2 {
+            font-size: 1.5em;
+            color: black;
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            /* 移除 h1 後，h2 向上移動 */
+        }
+
+        /* 輸入區域樣式 */
+        .input-area {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .input-area input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 120px;
+            height: 18px; 
+        }
+
+        .input-area button {
+            padding: 5px 10px; 
+            background-color: #f0f0f0; 
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: normal;
+            box-shadow: none;
+        }
+
+        .input-area button:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* 表格樣式 */
+        table {
+            width: 500px;
+            border-collapse: collapse;
+            margin-top: 15px;
+            border: none;
+        }
+
+        th, td {
+            border: 1px solid #ddd; 
+            padding: 10px;
+            text-align: center;
+        }
+
+        /* 表頭 (thead) 樣式 */
+        thead th {
+            background-color: #f7f7f7; 
+            color: #333;
+            font-weight: bold;
+        }
+
+        /* 表格主體 (tbody) 行樣式 */
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9; 
+        }
+
+        /* 底部平均行 (Footer Row) 樣式 */
+        tfoot td {
+            background-color: #e9e9e9; 
+            font-weight: bold;
+            border: 1px solid #ddd;
+        }
+
+        tfoot tr td:first-child {
+            text-align: left; 
+            padding-left: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Grade Statistics</h2>
+    
+    <div class="input-area">
+        <input type="number" id="mathGrade" placeholder="Math" min="0" max="100">
+        <input type="number" id="englishGrade" placeholder="English" min="0" max="100">
+        <button id="submitBtn">Submit</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Math</th>
+                <th>English</th>
+                <th>Average</th>
+            </tr>
+        </thead>
+        <tbody id="gradeTableBody">
+            <tr data-row-number="1">
+                <td>1</td>
+                <td data-subject="math">60</td>
+                <td data-subject="english">70</td>
+                <td data-subject="row-average">65.00</td>
+            </tr>
+            <tr data-row-number="2">
+                <td>2</td>
+                <td data-subject="math">100</td>
+                <td data-subject="english">80</td>
+                <td data-subject="row-average">90.00</td>
+            </tr>
+            <tr data-row-number="3">
+                <td>3</td>
+                <td data-subject="math">40</td>
+                <td data-subject="english">70</td>
+                <td data-subject="row-average">55.00</td>
+            </tr>
+        </tbody>
+        <tfoot id="gradeTableFooter">
+            <tr>
+                <td>Average</td>
+                <td id="avgMath">66.67</td>
+                <td id="avgEnglish">73.33</td>
+                <td id="avgOverall">70.00</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <script>
+        // 取得元素
+        const mathInput = document.getElementById('mathGrade');
+        const englishInput = document.getElementById('englishGrade');
+        const submitBtn = document.getElementById('submitBtn');
+        const tableBody = document.getElementById('gradeTableBody');
+        const avgMathCell = document.getElementById('avgMath');
+        const avgEnglishCell = document.getElementById('avgEnglish');
+        const avgOverallCell = document.getElementById('avgOverall');
+
+        // 初始化行數計數器 (從現有的行數開始)
+        let rowCount = tableBody.rows.length;
+
+        /**
+         * 5. 計算並更新所有列的平均值 (Math, English, Overall)
+         */
+        function updateColumnAverages() {
+            const rows = tableBody.querySelectorAll('tr');
+            if (rows.length === 0) {
+                avgMathCell.textContent = '';
+                avgEnglishCell.textContent = '';
+                avgOverallCell.textContent = '';
+                return;
+            }
+
+            let totalMath = 0;
+            let totalEnglish = 0;
+            let totalOverall = 0;
+            const N = rows.length;
+
+            rows.forEach(row => {
+                const mathCell = row.querySelector('td[data-subject="math"]');
+                const englishCell = row.querySelector('td[data-subject="english"]');
+                const rowAvgCell = row.querySelector('td[data-subject="row-average"]');
+
+                if (mathCell && englishCell && rowAvgCell) {
+                    const mathGrade = parseFloat(mathCell.textContent);
+                    const englishGrade = parseFloat(englishCell.textContent);
+                    const rowAverage = parseFloat(rowAvgCell.textContent);
+                    
+                    totalMath += mathGrade;
+                    totalEnglish += englishGrade;
+                    totalOverall += rowAverage; 
+                }
+            });
+
+            // 計算平均 (保留兩位小數)
+            const avgMath = (totalMath / N).toFixed(2);
+            const avgEnglish = (totalEnglish / N).toFixed(2);
+            const avgOverall = (totalOverall / N).toFixed(2); 
+
+            // 更新頁面顯示
+            avgMathCell.textContent = avgMath;
+            avgEnglishCell.textContent = avgEnglish;
+            avgOverallCell.textContent = avgOverall;
+        }
+
+        /**
+         * 4. 點擊 Submit 按鈕時的事件處理器
+         */
+        submitBtn.addEventListener('click', function () {
+            // 取得並驗證輸入值
+            const math = parseFloat(mathInput.value);
+            const english = parseFloat(englishInput.value);
+
+            if (isNaN(math) || isNaN(english) || math < 0 || english < 0 || math > 100 || english > 100) {
+                alert('請輸入有效的成績 (0-100 之間的數字)');
+                return;
+            }
+
+            // 計算行平均
+            const rowAverage = ((math + english) / 2).toFixed(2);
+
+            // 增加行數計數器
+            rowCount++;
+            
+            // 4.1. 創建新行並添加到表格
+            const newRow = tableBody.insertRow();
+            newRow.setAttribute('data-row-number', rowCount);
+            
+            // #
+            const cellNum = newRow.insertCell();
+            cellNum.textContent = rowCount;
+
+            // Math
+            const cellMath = newRow.insertCell();
+            cellMath.textContent = math.toFixed(0); 
+            cellMath.setAttribute('data-subject', 'math');
+
+            // English
+            const cellEnglish = newRow.insertCell();
+            cellEnglish.textContent = english.toFixed(0); 
+            cellEnglish.setAttribute('data-subject', 'english');
+
+            // 4.2. Average
+            const cellAvg = newRow.insertCell();
+            cellAvg.textContent = rowAverage;
+            cellAvg.setAttribute('data-subject', 'row-average');
+
+            // 清空輸入框
+            mathInput.value = '';
+            englishInput.value = '';
+
+            // 5. 動態計算並顯示新的平均值
+            updateColumnAverages();
+        });
+
+        // 頁面載入時，執行一次計算函數
+        document.addEventListener('DOMContentLoaded', updateColumnAverages);
+    </script>
+
+</body>
+</html>
