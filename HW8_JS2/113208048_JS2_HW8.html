@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Calculator</title>
+    
+    <style>
+        /* CSS 樣式：匹配圖片中的卡片和按鈕風格 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .calculator-card {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* 確保 padding 不會增加寬度 */
+        }
+
+        select {
+            height: 40px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #8B4513; /* 棕色，匹配圖片 */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #6e370f;
+        }
+
+        .result-display {
+            margin-top: 30px;
+            font-size: 1.2em;
+            color: #333;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator-card">
+        <h2>JS Calculator</h2>
+
+        <div class="input-group">
+            <label for="num1">Number 1</label>
+            <input type="number" id="num1" value="30" placeholder="Enter first number"> 
+        </div>
+
+        <div class="input-group">
+            <label for="num2">Number 2</label>
+            <input type="number" id="num2" value="60" placeholder="Enter second number">
+        </div>
+
+        <div class="input-group">
+            <label for="operator">Operate way?</label>
+            <select id="operator">
+                <option value="+">+</option>
+                <option value="-">-</option>
+                <option value="*">*</option>
+                <option value="/">/</option>
+            </select>
+        </div>
+
+        <button onclick="calculate()">Add</button>
+
+        <div class="result-display">
+            Result = <span id="result">90.00</span>
+        </div>
+    </div>
+
+    <script>
+        // ------------------------------------------
+        // 3. 實作單獨的運算函數
+        // ------------------------------------------
+        function add(a, b) {
+            return a + b;
+        }
+
+        function subtract(a, b) {
+            return a - b;
+        }
+
+        function multiply(a, b) {
+            return a * b;
+        }
+
+        // 4. 處理除以零的情況
+        function divide(a, b) {
+            if (b === 0) {
+                return "Error: Division by zero";
+            }
+            return a / b;
+        }
+
+        // ------------------------------------------
+        // 主要計算邏輯
+        // ------------------------------------------
+        /**
+         * calculate() 函數：
+         * 獲取輸入，執行運算，並顯示結果
+         */
+        function calculate() {
+            // 2. 使用 getElementById() 獲取輸入
+            const num1Input = document.getElementById('num1').value;
+            const num2Input = document.getElementById('num2').value;
+            const operator = document.getElementById('operator').value;
+            const resultElement = document.getElementById('result');
+
+            // 將輸入轉換為數字 (使用 parseFloat 處理小數)
+            const num1 = parseFloat(num1Input);
+            const num2 = parseFloat(num2Input);
+
+            // 驗證輸入是否為有效數字
+            if (isNaN(num1) || isNaN(num2)) {
+                resultElement.textContent = "Invalid input";
+                return;
+            }
+
+            let result;
+
+            // 根據選擇的運算符執行對應函數
+            switch (operator) {
+                case '+':
+                    result = add(num1, num2);
+                    break;
+                case '-':
+                    result = subtract(num1, num2);
+                    break;
+                case '*':
+                    result = multiply(num1, num2);
+                    break;
+                case '/':
+                    result = divide(num1, num2);
+                    break;
+                default:
+                    resultElement.textContent = "Invalid Operator";
+                    return;
+            }
+
+            // 處理除以零的錯誤訊息
+            if (typeof result === "string") {
+                resultElement.textContent = result;
+            } else {
+                // 5. 結果顯示：四捨五入到小數點後兩位
+                resultElement.textContent = result.toFixed(2);
+            }
+        }
+
+        // 初始載入時執行一次計算，以顯示預設值 90.00
+        document.addEventListener('DOMContentLoaded', calculate);
+        
+        // 監聽下拉選單和輸入框的變動，實時更新結果 (可選的優化)
+        document.getElementById('num1').addEventListener('input', calculate);
+        document.getElementById('num2').addEventListener('input', calculate);
+        document.getElementById('operator').addEventListener('change', calculate);
+        
+        // 額外優化：更新按鈕文字以匹配當前操作
+        document.getElementById('operator').addEventListener('change', function() {
+            const operatorText = {
+                '+': 'Add',
+                '-': 'Subtract',
+                '*': 'Multiply',
+                '/': 'Divide'
+            };
+            const selectedOp = this.value;
+            document.querySelector('button').textContent = operatorText[selectedOp] || 'Calculate';
+        });
+
+    </script>
+
+</body>
+</html>
